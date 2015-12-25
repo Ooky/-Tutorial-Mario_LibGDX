@@ -1,11 +1,11 @@
 package ch.coldpixel.mario.Screens;
 
 import ch.coldpixel.mario.MarioBros;
+import ch.coldpixel.mario.Scenes.Hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -18,28 +18,28 @@ public class PlayScreen implements Screen {
 //============================================================================== 
     //Game
     private MarioBros game;
-    //Texutre
-    Texture texture;
     //Cam
     private OrthographicCamera gameCam;
     //Viewport
     private Viewport gamePort;
+    //HUD
+    private Hud hud;
 //==============================================================================
 //Methods
 //==============================================================================
 
     public PlayScreen(MarioBros game) {
         this.game = game;
-        texture = new Texture("badlogic.jpg");
         gameCam = new OrthographicCamera();
         
         //All different ViewPorts
-//        gamePort = new StretchViewport(800, 480, gameCam);//Stretches to the whole screen
-        gamePort = new FitViewport(800, 480, gameCam); //Maintains aspect Ratio, sets border if it cannot use all the screen
+//        gamePort = new StretchViewport(MarioBros.V_WIDTH, MarioBros.V_HEIGHT, gameCam);//Stretches to the whole screen
+        gamePort = new FitViewport(MarioBros.V_WIDTH, MarioBros.V_HEIGHT, gameCam); //Maintains aspect Ratio, sets border if it cannot use all the screen
 //        gamePort = new ScreenViewport(gameCam); //Larger Screen = More World, 
         //1 World unit == 1 screen Pixel
         //Could give an unfair advantage to players with huge Screens
         
+        hud = new Hud(game.batch);
         
     }
 
@@ -49,13 +49,11 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        game.batch.setProjectionMatrix(gameCam.combined);
-        game.batch.begin();
-        game.batch.draw(texture, 0, 0);
-        game.batch.end();
+        game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
     }
 
     @Override
