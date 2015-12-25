@@ -6,17 +6,25 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MarioBros extends Game {
-	public SpriteBatch batch; //All of our different screen can take this Spritebatch
-	Texture img;
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-                setScreen(new PlayScreen(this));
-	}
 
-	@Override
-	public void render () {
-		super.render(); //Delegate the render method to the Play
-	}
+//==============================================================================
+//Initialization
+//============================================================================== 
+    public SpriteBatch batch; //All of our different screen can take this Spritebatch
+    Texture img;
+    
+//==============================================================================
+//Methods
+//==============================================================================
+
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        setScreen(new PlayScreen(this));
+    }
+
+    @Override
+    public void render() {
+        super.render(); //Delegate the render method to the Play
+    }
 }//public class MarioBros extends Game {
