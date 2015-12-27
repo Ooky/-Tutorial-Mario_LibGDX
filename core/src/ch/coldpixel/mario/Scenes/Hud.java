@@ -38,6 +38,9 @@ public class Hud {
     Label worldLabel;
     Label marioLabel;
 
+//==============================================================================
+//Methods
+//==============================================================================
     public Hud(SpriteBatch sb) {
         worldTimer = 300;
         timeCount = 0;
