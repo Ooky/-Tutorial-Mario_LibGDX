@@ -9,18 +9,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -32,6 +26,8 @@ public class PlayScreen implements Screen {
 //============================================================================== 
     //Game
     private MarioBros game;
+    private TextureAtlas atlas;
+
     //Cam
     private OrthographicCamera gameCam;
     //Viewport
@@ -54,6 +50,8 @@ public class PlayScreen implements Screen {
 //Methods
 //==============================================================================
     public PlayScreen(MarioBros game) {
+        atlas = new TextureAtlas("Mario_and_Enemies.pack");
+
         this.game = game;
         gameCam = new OrthographicCamera();
 
@@ -77,7 +75,7 @@ public class PlayScreen implements Screen {
 
         //create mario in our game world
         world = new World(new Vector2(0, -10), true);
-        player = new Mario(world);
+        player = new Mario(world, this);
 
         new B2WorldCreator(world, map);
     }
@@ -98,12 +96,18 @@ public class PlayScreen implements Screen {
         }
     }
 
+    public TextureAtlas getAtlas() {
+        return atlas;
+    }
+
     public void update(float dt) {
         //handle user input first
         handleInput(dt);
 
         world.step(1 / 60f, 6, 2);
         
+        player.update(dt);
+
         gameCam.position.x = player.b2body.getPosition().x;
 
         //update our gamecam with correct coordinates after changes
@@ -126,9 +130,15 @@ public class PlayScreen implements Screen {
         //render our Box2DDebugLines
         b2dr.render(world, gameCam.combined);
 
+        game.batch.setProjectionMatrix(gameCam.combined);
+        game.batch.begin();
+        player.draw(game.batch);
+        game.batch.end();
+        hud.stage.draw();
+
         //Set our batch to now draw what the Hud camera sees.
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
-        hud.stage.draw();
+
     }
 
     @Override
